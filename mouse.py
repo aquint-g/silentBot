@@ -15,7 +15,10 @@ def leftClick():
 # MOUSE MOVEMENTS
 """
 def mousePos(x_pad,y_pad,cord):
-    win32api.SetCursorPos((x_pad + cord[0], y_pad + cord[1]))
+    print("Going to "+str(cord[0])+ ","+str(cord[1]))
+    x=cord[0]
+    y=cord[1]
+    win32api.SetCursorPos((x,y))
 
  
 

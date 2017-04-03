@@ -2,13 +2,14 @@ import cv2
 import numpy
 def detectMonsters(frame):
 	hsv = 	cv2.cvtColor(frame,cv2.COLOR_BGR2HSV) # Convert RGB image into HSV image (Hue Saturation Value) => requiered for 
-	green = numpy.uint8([[[163,73,164 ]]]) 
+	green = numpy.uint8([[[66,0,132 ]]]) 
 	hsv_green = cv2.cvtColor(green,cv2.COLOR_BGR2HSV) #Convert the RGB Color to track into HSV Color
 	print hsv_green 
-	cv2.imshow("frame",frame)
-	color = numpy.array([150,141,164]) 
+	#cv2.imshow("frame",frame)
+	color = numpy.array([165,255,132]) 
 
 	mask = cv2.inRange(hsv, color, color) #The inRange function takes 2 colors. Upper and Lower. Everything between will be targeted. here, we only want one color.
+	 	
 	res = cv2.bitwise_and(frame,frame, mask= mask) #The result of the match. it negates every single pixel but the ones with our color inside.
 
 	cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2] #Found contours on mask
