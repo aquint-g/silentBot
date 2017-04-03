@@ -23,27 +23,32 @@ screen_height = 1080
 
 
 
+
 #cap = cv2.VideoCapture(0)
+# Requirement : GRF edition to show up the monsters we want to target into color specific squares
+# We'll loop screenshotting the client window
+# On these screenshots, we'll find the color specific squares and locate them using the "CONTOURS" technology of OpenCV
+# Need to plug a winpcap listener on the client in order to analyze the incoming trafic (the incoming only) : It will allow us 
+
 
 while(1):
-    frame = cv2.imread('full_snap__1490996017.png')
-    hsv = 	cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
-    green = numpy.uint8([[[163,73,164 ]]])
-    hsv_green = cv2.cvtColor(green,cv2.COLOR_BGR2HSV)
-    print hsv_green
+    frame = cv2.imread('full_snap__1490996017.png') #  Here is the screenshot, it'll be automated then (the function exists below)
+    hsv = 	cv2.cvtColor(frame,cv2.COLOR_BGR2HSV) # Convert RGB image into HSV image (Hue Saturation Value) 
+    green = numpy.uint8([[[163,73,164 ]]]) 
+    hsv_green = cv2.cvtColor(green,cv2.COLOR_BGR2HSV) #Convert the RGB Color to track into HSV Color
+    print hsv_green 
     cv2.imshow("frame",frame)
-    lower_blue = numpy.array([150,141,164])
-    upper_blue = numpy.array([150,141,164])
+    color = numpy.array([150,141,164]) 
 
-    mask = cv2.inRange(hsv, lower_blue, upper_blue)
-    res = cv2.bitwise_and(frame,frame, mask= mask)
-    im2, contours, hierarchy = cv2.findContours(mask,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+    mask = cv2.inRange(hsv, color, color) #The inRange function takes 2 colors. Upper and Lower. Everything between will be targeted. here, we only want one color.
+    res = cv2.bitwise_and(frame,frame, mask= mask) #The result of the match. it negates every single pixel but the ones with our color inside.
+    im2, contours, hierarchy = cv2.findContours(mask,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)	#Try to get the coordinates with FindContours.
 
-    cv2.imshow(hierarchy)
-    #cv2.imshow('frame',frame)
-    #cv2.imshow('mask',mask)
-    #cv2.imshow('res',res)
-
+    # Display Windows ... 
+    cv2.imshow('frame',frame)
+    cv2.imshow('mask',mask)
+    cv2.imshow('res',res)
+    # wait
     k = cv2.waitKey(5) & 0xFF
     if k == 27:
         break
