@@ -3,7 +3,7 @@
 This file contains all human-like events like clicks and keyboard typing (simplified ..)
 """
 import win32api, win32con
-
+import time
 def leftClick():
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,0,0)
     time.sleep(.1)
@@ -14,7 +14,7 @@ def leftClick():
 """
 # MOUSE MOVEMENTS
 """
-def mousePos(cord):
+def mousePos(x_pad,y_pad,cord):
     win32api.SetCursorPos((x_pad + cord[0], y_pad + cord[1]))
 
  
