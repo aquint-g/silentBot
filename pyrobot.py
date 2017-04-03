@@ -42,12 +42,24 @@ while(1):
 
     mask = cv2.inRange(hsv, color, color) #The inRange function takes 2 colors. Upper and Lower. Everything between will be targeted. here, we only want one color.
     res = cv2.bitwise_and(frame,frame, mask= mask) #The result of the match. it negates every single pixel but the ones with our color inside.
-    im2, contours, hierarchy = cv2.findContours(mask,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)	#Try to get the coordinates with FindContours.
 
+    cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2] #Found contours on mask
+    cv2.drawContours(frame, cnts, 0, (127, 255, 0), 3)# Draw the contours on the base frame (the screenshot)
+
+    (x,y),radius = cv2.minEnclosingCircle(cnts[0])
+
+    print("x: "+x+" y: "+y) # Here are the coordinates of the center of the object
+    # These coordinates need a light modification. Indeed, here, we're counting as y,x = 0 = bottom left of the image, wherehas, according to win32api, y,x = 0 = top left of  the screen 
+
+    center = (int(x),int(y))
+    radius = int(radius)
+    cv2.circle(frame, center, radius, (255, 0, 0), 3)
     # Display Windows ... 
     cv2.imshow('frame',frame)
+    """
     cv2.imshow('mask',mask)
     cv2.imshow('res',res)
+    """
     # wait
     k = cv2.waitKey(5) & 0xFF
     if k == 27:
