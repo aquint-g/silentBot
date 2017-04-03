@@ -16,43 +16,60 @@ import numpy
 import ImageOps
 from PIL import ImageChops
 import cv2
+#import player
+from detection import *
+# x_pad and y_pad are the position of the window on your screen (no problem if full screen)
 x_pad = 0
-y_pad = 0
-screen_width = 1920
-screen_height = 1080
+y_pad = 0 
+screen_width = 670
+screen_height = 550
+
+teleport_key = "F5"
 
 
 
 
 #cap = cv2.VideoCapture(0)
 # Requirement : GRF edition to show up the monsters we want to target into color specific squares
+# Requirement 2  : Disable lightmaps ( Ragnarök settings )
 # We'll loop screenshotting the client window
 # On these screenshots, we'll find the color specific squares and locate them using the "CONTOURS" technology of OpenCV
-# Need to plug a winpcap listener on the client in order to analyze the incoming trafic (the incoming only) : It will allow us 
+# Need to plug a winpcap listener on the client in order to analyze the incoming trafic (the incoming only) : It will allow us to watch HP / SP, 
 
-
+# Issue 1 :
+# The cursor go on a location next to the target, but not on it.
+# You sould configure your Python.exe to accept high resolution DPI => Go to your Python FOlder => right click => compatibilities .. and you're done
 while(1):
-    frame = cv2.imread('full_snap__1490996017.png') #  Here is the screenshot, it'll be automated then (the function exists below)
-    hsv = 	cv2.cvtColor(frame,cv2.COLOR_BGR2HSV) # Convert RGB image into HSV image (Hue Saturation Value) 
-    green = numpy.uint8([[[163,73,164 ]]]) 
-    hsv_green = cv2.cvtColor(green,cv2.COLOR_BGR2HSV) #Convert the RGB Color to track into HSV Color
-    print hsv_green 
-    cv2.imshow("frame",frame)
-    color = numpy.array([150,141,164]) 
+	#frame = cv2.imread('norauto.jpg') #  Here is the screenshot, it'll be automated then with screenGrab lib (the function exists below)
+	printscreen = ImageGrab.grab()
+	frame =   numpy.array(printscreen.getdata(),dtype='uint8')\
+    .reshape((printscreen.size[1],printscreen.size[0],3)) 
 
-    mask = cv2.inRange(hsv, color, color) #The inRange function takes 2 colors. Upper and Lower. Everything between will be targeted. here, we only want one color.
-    res = cv2.bitwise_and(frame,frame, mask= mask) #The result of the match. it negates every single pixel but the ones with our color inside.
-    im2, contours, hierarchy = cv2.findContours(mask,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)	#Try to get the coordinates with FindContours.
+	frame,coord = detectMonsters(frame)
+	if coord == False:
+		print("No monster Found")
+		Player.teleport
 
-    # Display Windows ... 
-    cv2.imshow('frame',frame)
+	else:
+		mouse.mousePos(x_pad,y_pad,coord)
+		time.sleep(.2)
+		mouse.leftClick()
+		time.sleep(7)
+
+	# Display Window ... 
+	#cv2.imshow('frame',frame)
+	
+	k = cv2.waitKey(2) & 0xFF
+
+	if k == 27:
+		break
+
+"""
     cv2.imshow('mask',mask)
     cv2.imshow('res',res)
+    """
     # wait
-    k = cv2.waitKey(5) & 0xFF
-    if k == 27:
-        break
-
+	
 
 """
 while(True):
