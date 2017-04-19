@@ -9,29 +9,32 @@ game area = x_pad+1, y_pad+1, x_pad+screen_width, y_pad+screen_height
 import config
 import os
 import time
-from screenGrab import *
 import mouse
-import win32api, win32con
-import numpy
-import ImageOps
+import win32api, win32con #à virer car déjà appelé dans mouse.py
+import ImageOps # plus besoin
 from PIL import ImageChops
 import cv2
 #import player
-from detection import *
+import sniffer
+import Queue
+from threading import Thread
+import watcher
 # x_pad and y_pad are the position of the window on your screen (no problem if full screen)
 x_pad = 0
 y_pad = 0 
 screen_width = 670
 screen_height = 550
-
+debug = False
 teleport_key = "F5"
 
 
 
-
+# Dev under Python 2.7  
 #cap = cv2.VideoCapture(0)
 # Requirement : GRF edition to show up the monsters we want to target into color specific squares
 # Requirement 2  : Disable lightmaps ( Ragnarök settings )
+# pip install pydivert (for packet sniffing)
+
 # We'll loop screenshotting the client window
 # On these screenshots, we'll find the color specific squares and locate them using the "CONTOURS" technology of OpenCV
 # Need to plug a winpcap listener on the client in order to analyze the incoming trafic (the incoming only) : It will allow us to watch HP / SP, 
@@ -39,30 +42,44 @@ teleport_key = "F5"
 # Issue 1 :
 # The cursor go on a location next to the target, but not on it.
 # You sould configure your Python.exe to accept high resolution DPI => Go to your Python FOlder => right click => compatibilities .. and you're done
-while(1):
-	#frame = cv2.imread('norauto.jpg') #  Here is the screenshot, it'll be automated then with screenGrab lib (the function exists below)
-	printscreen = ImageGrab.grab()
-	frame =   numpy.array(printscreen.getdata(),dtype='uint8')\
-    .reshape((printscreen.size[1],printscreen.size[0],3)) 
 
-	frame,coord = detectMonsters(frame)
-	if coord == False:
-		print("No monster Found")
-		Player.teleport
 
-	else:
-		mouse.mousePos(x_pad,y_pad,coord)
-		time.sleep(.2)
-		mouse.leftClick()
-		time.sleep(7)
 
+def watchScreen(mainQueue):
+    watcher.watch(mainQueue)
+
+def program():
+    global mainQueue
+    mainQueue = Queue.LifoQueue()
+    t1 = Thread(target = watchScreen,args=(mainQueue,)) # target is the above function
+    t1.start() # start the thread
+
+    while(1):
+        if mainQueue.qsize() > 0:
+            print("There are "+str(mainQueue.qsize())+" items in queue")
+            element = mainQueue.get()
+            if element["type"]=="monster":
+                print("monster found on "+str(element["coord"][0])+","+str(element["coord"][1]))
+                
+        else:
+            time.sleep(1)
+
+
+if __name__ == '__main__':
+    program()
+"""         
+mouse.mousePos(x_pad,y_pad,coord)
+		#time.sleep(.2)
+mouse.leftClick()
+		#time.sleep(7)
+"""
 	# Display Window ... 
 	#cv2.imshow('frame',frame)
 	
-	k = cv2.waitKey(2) & 0xFF
+	#k = cv2.waitKey(2) & 0xFF
 
-	if k == 27:
-		break
+	#if k == 27:
+	#	break
 
 """
     cv2.imshow('mask',mask)
