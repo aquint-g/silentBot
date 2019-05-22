@@ -16,7 +16,7 @@ def watch(mainQueue):
                 print("No monster Found")
     		  #Player.teleport
 
-    	else:
+        else:
             element = {}
             element["type"] = "monster"
             element["coord"] = coord

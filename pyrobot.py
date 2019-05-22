@@ -11,12 +11,12 @@ import os
 import time
 import mouse
 import win32api, win32con #à virer car déjà appelé dans mouse.py
-import ImageOps # plus besoin
+from PIL import ImageOps # plus besoin
 from PIL import ImageChops
 import cv2
 #import player
 import sniffer
-import Queue
+import queue
 from threading import Thread
 import watcher
 # x_pad and y_pad are the position of the window on your screen (no problem if full screen)
@@ -50,7 +50,7 @@ def watchScreen(mainQueue):
 
 def program():
     global mainQueue
-    mainQueue = Queue.LifoQueue()
+    mainQueue = queue.Queue()
     t1 = Thread(target = watchScreen,args=(mainQueue,)) # target is the above function
     t1.start() # start the thread
 

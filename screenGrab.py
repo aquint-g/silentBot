@@ -1,6 +1,6 @@
 
 #-*- coding: utf-8 -*-
-import ImageGrab
+from PIL import ImageGrab
 import os
 import time
 import PIL

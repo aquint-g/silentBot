@@ -1,1 +1,1 @@
-python pyrobot.py
+py pyrobot.py
