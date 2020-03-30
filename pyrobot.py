@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+ #-*- coding: utf-8 -*-
 """
 Toutes les coordonnées sont basées sur un écran de résolution 1920x1080
 x_pad = 0
@@ -19,6 +19,7 @@ import sniffer
 import queue
 from threading import Thread
 import watcher
+import pyautogui
 # x_pad and y_pad are the position of the window on your screen (no problem if full screen)
 x_pad = 0
 y_pad = 0 
@@ -60,6 +61,10 @@ def program():
             element = mainQueue.get()
             if element["type"]=="monster":
                 print("monster found on "+str(element["coord"][0])+","+str(element["coord"][1]))
+                pyautogui.moveTo(element["coord"][0],element["coord"][1])
+                pyautogui.press('f3')
+                pyautogui.click()
+
                 
         else:
             time.sleep(1)
