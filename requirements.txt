@@ -1,4 +1,4 @@
-pywin32==227
+pywin32==301
 pillow==6.0.0
 opencv-python==4.1.2.30
 pydivert==2.1.0
